@@ -1,0 +1,2 @@
+module Aeocli::Model
+end
