@@ -18,8 +18,9 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.add_development_dependency "aruba"
   gem.add_development_dependency "cucumber"
-  gem.add_dependency "activeresource"
-  gem.add_dependency "active_support", "~>3.0.0"
+  gem.add_development_dependency "rspec"
+  gem.add_dependency "activeresource", "~>3.2.9"
+  gem.add_dependency "activesupport", "~>3.2.9"
   gem.add_dependency "nokogiri", "~>1.5.5"
   gem.add_dependency "thor", "~>0.16.0"
 end
