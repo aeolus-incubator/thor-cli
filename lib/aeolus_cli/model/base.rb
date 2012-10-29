@@ -28,6 +28,7 @@ end
 
 class AeolusCli::Model::Base < ActiveResource::Base
   self.timeout = 600
+  self.format = :xml
   class << self
     # get an error like   base.rb:885:in `instantiate_collection':
     # undefined method `collect!' for #<Hash:0x00000001b1a9d0> (NoMethodError)
