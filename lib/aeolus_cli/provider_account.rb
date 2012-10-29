@@ -1,6 +1,6 @@
-require 'aeocli/common_cli'
+require 'aeolus_cli/common_cli'
 
-class Aeocli::ProviderAccount < Aeocli::CommonCLI
+class AeolusCli::ProviderAccount < AeolusCli::CommonCli
 
   desc "list", "list provider accounts"
   # TODO maybe an optional variable for provider_type

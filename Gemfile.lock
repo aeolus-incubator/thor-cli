@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    aeocli (0.0.1)
+    aeolus_cli (0.0.2)
       active_support (~> 3.0.0)
       activeresource
       nokogiri (~> 1.5.5)
@@ -54,8 +54,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  aeocli!
+  aeolus_cli!
   aruba
   cucumber
   rspec
-  thor

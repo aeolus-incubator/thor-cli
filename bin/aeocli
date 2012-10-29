@@ -1,4 +1,0 @@
-#!/usr/bin/env ruby
-
-require 'aeocli/cli'
-Aeocli::CLI.start

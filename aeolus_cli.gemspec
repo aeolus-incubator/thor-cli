@@ -1,11 +1,11 @@
 # -*- encoding: utf-8 -*-
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'aeocli/version'
+require 'aeolus_cli/version'
 
 Gem::Specification.new do |gem|
-  gem.name          = "aeocli"
-  gem.version       = Aeocli::VERSION
+  gem.name          = "aeolus_cli"
+  gem.version       = AeolusCli::VERSION
   gem.authors       = "Crag Wolfe"
   gem.email         = "cwolfe@redhat.com"
   gem.description   = %q{Command-line interface to aeolus}

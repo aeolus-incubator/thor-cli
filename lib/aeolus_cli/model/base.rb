@@ -1,25 +1,12 @@
 require 'active_resource'
 require 'active_support'
-require 'aeocli'
-require 'aeocli/model'
+require 'aeolus_cli'
+require 'aeolus_cli/model'
 
 ActiveResource::Base.logger = Logger.new(STDOUT)
-ActiveResource::Base.logger.level = Logger::DEBUG
-module ActiveResource
-  class LogSubscriber < ActiveSupport::LogSubscriber
-    def request(event)
-      result = event.payload[:result]
-      color_info :green, "#{event.payload[:method].to_s.upcase} "+
-        "#{event.payload[:request_uri]}"
-      color_info :green, "--> %d %s %d (%.1fms)" % [result.code, result.message,
-                                        result.body.to_s.length, event.duration]
-      color_info :yellow, result.body.to_s
-    end
-    def color_info(color, msg)
-      info(msg.respond_to?(color) ? msg.send(color) : msg)
-    end
-  end
+ActiveResource::Base.logger.level = Logger::INFO
 
+module ActiveResource
   class Errors
     # Grabs errors from an XML response.
     def from_xml(xml, save_cache = false)
@@ -39,10 +26,12 @@ module ActiveResource
   end
 end
 
-class Aeocli::Model::Base < ActiveResource::Base
+class AeolusCli::Model::Base < ActiveResource::Base
   self.timeout = 600
-  self.format = :xml
   class << self
+    # get an error like   base.rb:885:in `instantiate_collection':
+    # undefined method `collect!' for #<Hash:0x00000001b1a9d0> (NoMethodError)
+    # without this method defined.
     def instantiate_collection(collection, prefix_options = {})
       if collection.is_a?(Hash) && collection.size == 1
         value = collection.values.first
@@ -61,25 +50,5 @@ class Aeocli::Model::Base < ActiveResource::Base
         end
       end
     end
-
-    def headers
-      if !ENV['LANG'].nil? && ENV['LANG'].size >= 2
-        {'ACCEPT_LANGUAGE' => ENV['LANG'][0,2]}
-      else
-        {}
-      end
-    end
   end
-
-  # Active Resrouce Uses dashes instead of underscores, this method overrides to use underscore
-  def to_xml(options={})
-    options[:dasherize] ||= false
-    super({ :root => self.class.element_name }.merge(options))
-  end
-
-  # Instance Methods
-  def to_s
-    id
-  end
-
 end
