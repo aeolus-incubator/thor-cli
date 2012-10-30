@@ -8,12 +8,13 @@ require 'aeolus_cli/model/base'
 require 'aeolus_cli/model/provider_type'
 
 class AeolusCli::CommonCli < Thor
+  class_option :conductor_url, :type => :string
+  class_option :username, :type => :string
+  class_option :password, :type => :string
 
   def initialize(*args)
     super
-    @config_location = "~/.aeolus-cli"
-    @config = load_config
-    configure_active_resource
+    configure_conductor_connection(options)
   end
 
   # abstract-y methods
@@ -27,8 +28,28 @@ class AeolusCli::CommonCli < Thor
     self.shell.say "Implement me."
   end
 
-
   protected
+
+  def configure_conductor_connection(options)
+    # check default config file locations 
+    ["~/.aeolus-cli","/etc/aeolus-cli"].each do |fname|
+      if is_file?(fname)
+        @config = YAML::load(File.open(File.expand_path(fname)))
+        break
+      end
+    end
+    configure_active_resource
+    # allow overrides from command line
+    if options[:conductor_url]
+      AeolusCli::Model::Base.site = options[:conductor_url]
+    end
+    if options[:username]
+      AeolusCli::Model::Base.user = options[:username]
+    end
+    if options[:password]
+      AeolusCli::Model::Base.password = options[:password]
+    end
+  end
 
   # Given an array of attribute key name and pretty name pairs
   # and an active resource collection, print the output.
@@ -69,8 +90,9 @@ class AeolusCli::CommonCli < Thor
     deltacloud_driver_to_provider_type
   end
 
-  # All of the methods below, which just load site/username/password
-  # from ~/.aeolus-cli are borrowed from original aeolus-cli project
+  # The two methods below which are related to loading
+  # site/username/password from a config file such as ~/.aeolus-cli
+  # are borrowed from original aeolus-cli project
   def configure_active_resource
     if @config.has_key?(:conductor)
       [:url, :password, :username].each do |key|
@@ -86,40 +108,6 @@ class AeolusCli::CommonCli < Thor
     end
   end
 
-  def load_config
-    begin
-      file_str = read_file(@config_location)
-      if is_file?(@config_location) && !file_str.include?(":url")
-        lines = File.readlines(File.expand_path(@config_location)).map do |line|
-          "#" + line
-        end
-        File.open(File.expand_path(@config_location), 'w') do |file|
-          file.puts lines
-        end
-        write_file
-      end
-      write_file unless is_file?(@config_location)
-      YAML::load(File.open(File.expand_path(@config_location)))
-    rescue Errno::ENOENT
-      #TODO: Create a custom exception to wrap CLI Exceptions
-      raise "Unable to locate or write configuration file: \"" +
-        @config_location + "\""
-    end
-  end
-
-  def read_file(path)
-    begin
-      full_path = File.expand_path(path)
-      if is_file?(path)
-        File.read(full_path)
-      else
-        return nil
-      end
-    rescue
-      nil
-    end
-  end
-
   # TODO: Consider ripping all this file-related stuff into a module or
   # class for better encapsulation and testability
   def is_file?(path)
@@ -130,11 +118,4 @@ class AeolusCli::CommonCli < Thor
     false
   end
 
-  def write_file
-    example = File.read(File.expand_path(File.dirname(__FILE__) +
-                                         "/../../../examples/aeolus-cli"))
-    File.open(File.expand_path(@config_location), 'a+', 0600) do |f|
-      f.write(example)
-    end
-  end
 end
