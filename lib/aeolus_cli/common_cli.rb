@@ -31,6 +31,7 @@ class AeolusCli::CommonCli < Thor
   protected
 
   def configure_conductor_connection(options)
+    @config = nil
     # check default config file locations 
     ["~/.aeolus-cli","/etc/aeolus-cli"].each do |fname|
       if is_file?(fname)
@@ -38,7 +39,9 @@ class AeolusCli::CommonCli < Thor
         break
       end
     end
-    configure_active_resource
+    if @config != nil
+      configure_active_resource
+    end
     # allow overrides from command line
     if options[:conductor_url]
       AeolusCli::Model::Base.site = options[:conductor_url]
