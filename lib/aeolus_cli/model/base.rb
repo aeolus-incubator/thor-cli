@@ -1,7 +1,7 @@
 require 'active_resource'
-require 'active_support'
 require 'aeolus_cli'
 require 'aeolus_cli/model'
+require 'logger'
 
 ActiveResource::Base.logger = Logger.new(STDOUT)
 ActiveResource::Base.logger.level = Logger::INFO

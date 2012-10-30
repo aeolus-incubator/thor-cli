@@ -1,5 +1,3 @@
-require "aeolus_cli/version"
-
 module AeolusCli
 end
 
