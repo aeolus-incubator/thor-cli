@@ -1,8 +1,4 @@
-#require 'rest_client'
 require 'active_resource'
-require 'active_support'
-require 'nokogiri'
-require 'logger'
 require 'thor'
 require 'aeolus_cli/model/base'
 require 'aeolus_cli/model/provider_type'

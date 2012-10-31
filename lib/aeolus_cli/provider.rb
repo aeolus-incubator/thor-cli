@@ -1,4 +1,3 @@
-require 'active_support'
 require 'aeolus_cli/common_cli'
 require 'aeolus_cli/model/provider'
 
