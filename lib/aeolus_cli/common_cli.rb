@@ -50,22 +50,23 @@ class AeolusCli::CommonCli < Thor
     end
   end
 
-  # Given an array of attribute key name and pretty name pairs
-  # and an active resource collection, print the output.
-  def print_table( keys_and_pretty_names, ares_collection)
+  # Given a hash of attribute key name to pretty name and an active
+  # resource collection, print the output.
+  def print_table( keys_to_pretty_names, ares_collection)
     t = Array.new
-    row = Array.new
-    keys_and_pretty_names.each do |key, pretty_name|
-      row.push pretty_name
-    end
-    t.push row
+
+    # Add the first row, the column headings
+    t.push keys_to_pretty_names.values
+
+    # Add the data
     ares_collection.each do |ares|
       row = Array.new
-      keys_and_pretty_names.each do |key, pretty_name|
+      keys_to_pretty_names.keys.each do |key|
         row.push ares.attributes[key].to_s
       end
       t.push row
     end
+
     # use Thor's shell.print_table()
     self.shell.print_table(t)
   end
