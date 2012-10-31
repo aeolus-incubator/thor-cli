@@ -34,28 +34,4 @@ end
 class AeolusCli::Model::Base < ActiveResource::Base
   self.timeout = 600
   self.format = :xml
-  class << self
-    # get an error like   base.rb:885:in `instantiate_collection':
-    # undefined method `collect!' for #<Hash:0x00000001b1a9d0> (NoMethodError)
-    # without this method defined.
-    def instantiate_collection(collection, prefix_options = {})
-      if collection.is_a?(Hash) && collection.size == 1
-        value = collection.values.first
-        if value.is_a?(Array)
-          value.collect! { |record| instantiate_record(record,prefix_options) }
-        else
-          [ instantiate_record(value, prefix_options) ]
-        end
-      elsif collection.is_a?(Hash)
-        instantiate_record(collection, prefix_options)
-      else
-        begin
-          collection.collect! { |record| instantiate_record(record, 
-                                                            prefix_options) }
-        rescue
-          []
-        end
-      end
-    end
-  end
 end
