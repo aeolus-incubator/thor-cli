@@ -1,2 +1,0 @@
-module AeolusCli::Model
-end
