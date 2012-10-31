@@ -1,6 +1,5 @@
 require 'active_resource'
 require 'aeolus_cli'
-require 'aeolus_cli/model'
 require 'logger'
 
 ActiveResource::Base.logger = Logger.new(STDOUT)
@@ -26,6 +25,12 @@ module ActiveResource
   end
 end
 
+# declaring the namespace but for style reasons not including the Base
+# class definition within the block (saving as much excessive
+# indentation as possible)
+module AeolusCli::Model
+end
+
 class AeolusCli::Model::Base < ActiveResource::Base
   self.timeout = 600
   self.format = :xml
@@ -45,7 +50,8 @@ class AeolusCli::Model::Base < ActiveResource::Base
         instantiate_record(collection, prefix_options)
       else
         begin
-          collection.collect! { |record| instantiate_record(record, prefix_options) }
+          collection.collect! { |record| instantiate_record(record, 
+                                                            prefix_options) }
         rescue
           []
         end
