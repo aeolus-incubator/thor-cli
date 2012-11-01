@@ -32,7 +32,7 @@ instead be supplied on the command line with --conductor-url,
 
     $ aeolus provider help add
     Usage:
-      aeolus add PROVIDER_NAME -t, --provider-type=PROVIDER_TYPE
+      aeolus provider add PROVIDER_NAME -t, --provider-type=PROVIDER_TYPE
 
     Options:
       -t, --provider-type=PROVIDER_TYPE                # E.g. ec2, vsphere, mock, rhevm...
@@ -56,7 +56,7 @@ instead be supplied on the command line with --conductor-url,
 
     $ aeolus provider_account help add
     Usage:
-      aeolus add PROVIDER_ACCOUNT_LABEL --credentials-file=CREDENTIALS_FILE -n, --provider-name=PROVIDER_NAME
+      aeolus provider_account add PROVIDER_ACCOUNT_LABEL --credentials-file=CREDENTIALS_FILE -n, --provider-name=PROVIDER_NAME
 
     Options:
       -n, --provider-name=PROVIDER_NAME        # (already existing) provider name
