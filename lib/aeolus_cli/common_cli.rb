@@ -26,6 +26,21 @@ class AeolusCli::CommonCli < Thor
 
   protected
 
+  class << self
+    def banner(task, namespace = nil, subcommand = false)
+      "#{basename} #{task.formatted_usage(self, false, true)}"
+
+      # Above line Overrides the line from Thor, below, so the printed usage
+      # line is correct, e.g. for "aeolus provider help list" we get
+      #   Usage:
+      #     aeolus provider list
+      # instead of
+      #   Usage:
+      #     aeolus list
+      #"#{basename} #{task.formatted_usage(self, $thor_runner, subcommand)}"
+    end
+  end
+
   def configure_conductor_connection(options)
     @config = nil
     # check default config file locations 
