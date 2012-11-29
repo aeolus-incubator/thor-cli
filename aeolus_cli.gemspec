@@ -19,8 +19,8 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "aruba"
   gem.add_development_dependency "cucumber"
   gem.add_development_dependency "rspec"
-  gem.add_dependency "activeresource", "~>3.2.8"
-  gem.add_dependency "activesupport", "~>3.2.8"
+  gem.add_dependency "activeresource", "~>3.2.9"
+  gem.add_dependency "activesupport", "~>3.2.9"
   gem.add_dependency "nokogiri", "~>1.5.5"
   gem.add_dependency "thor", "~>0.16.0"
 end
