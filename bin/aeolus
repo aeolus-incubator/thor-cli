@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+
+require 'aeolus_cli/main'
+AeolusCli::Main.start
