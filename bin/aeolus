@@ -1,4 +1,22 @@
 #!/usr/bin/env ruby
 
 require 'aeolus_cli/main'
-AeolusCli::Main.start
+
+begin
+  AeolusCli::Main.start
+rescue Exception => ex
+  puts "Error:  #{ex.message}"
+  fname = "/tmp/aeolus-cli-trace-#{Process.pid}.log"
+  the_stack_trace = ex.backtrace().join($/)
+  begin
+    # it is very unlikely writing to /tmp would fail, but
+    # wrap this so we don't bury the original exception
+    f = File.open(fname, "w")
+    puts "For further debugging information, see #{fname}"
+    f.puts the_stack_trace
+    f.close
+  rescue
+    puts "Was unable to write to the following stack trace to #{fname}:"
+    puts the_stack_trace
+  end
+end

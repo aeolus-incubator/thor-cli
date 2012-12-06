@@ -1,0 +1,2 @@
+# Default terminal width we use for cucumber tests
+default: THOR_COLUMNS=118
