@@ -99,13 +99,36 @@ instead be supplied on the command line with --conductor-url,
     ERROR:  Conductor was unable to save the provider
     ["Provider name has already been taken"]
 
-## Stubs in place for provider_account actions
+## List provider accounts
 
     $ aeolus provider_account list
-    Placeholder to list provider accounts
-    $ aeolus provider_account add --provider-name a-provider-name --credentials-file /tmp/account-credentials.xml my_provider_account_name
-    Placeholder to add provider account with label my_provider_account_name
-    Parameter provider_name is a-provider-name
-    Parameter credentials_file is /tmp/account-credentials.xml
-    Parameter quota is unlimited
-    $
+    I, [2012-12-11T10:26:20.775263 #1864]  INFO -- : GET https://localhost:443/conductor/api/provider_accounts.xml
+    I, [2012-12-11T10:26:20.775443 #1864]  INFO -- : --> 200 OK 285 (104.1ms)
+    I, [2012-12-11T10:26:20.932803 #1864]  INFO -- : GET https://localhost:443/conductor/api/provider_accounts/2.xml
+    I, [2012-12-11T10:26:20.932911 #1864]  INFO -- : --> 200 OK 418 (106.7ms)
+    Name  Provider  Username  Quota
+    mock  mock      mockuser  unlimited
+
+## Add a provider account
+
+    $ cat /tmp/credentials.xml
+    <credentials>
+    <username>mockuser</username>
+    <password>mockpassword</password>
+    </credentials>
+    $ aeolus provider_account add mock --provider-name mock --credentials-file /tmp/credentials.xml
+    I, [2012-12-11T09:42:24.823114 #31824]  INFO -- : GET https://localhost:443/conductor/api/providers.xml
+    I, [2012-12-11T09:42:24.823226 #31824]  INFO -- : --> 200 OK 245 (110.0ms)
+    I, [2012-12-11T09:42:26.032696 #31824]  INFO -- : POST https://localhost:443/conductor/api/provider_accounts.xml
+    I, [2012-12-11T09:42:26.032939 #31824]  INFO -- : --> 201 Created 418 (1197.6ms)
+    Provider account mock added with id 2
+
+## Display remote error message when trying to add an existing provider account
+
+    $ aeolus provider_account add mock --provider-name mock --credentials-file /tmp/credentials.xml
+    I, [2012-12-11T10:31:56.555708 #2238]  INFO -- : GET https://localhost:443/conductor/api/providers.xml
+    I, [2012-12-11T10:31:56.555953 #2238]  INFO -- : --> 200 OK 245 (113.2ms)
+    I, [2012-12-11T10:31:56.930892 #2238]  INFO -- : POST https://localhost:443/conductor/api/provider_accounts.xml
+    I, [2012-12-11T10:31:56.931059 #2238]  INFO -- : --> 422 Unprocessable Entity 152 (357.4ms)
+    ERROR:  Conductor was unable to save the provider account
+    ["Label has already been taken", "Username has already been taken"]
