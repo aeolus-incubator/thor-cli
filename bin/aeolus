@@ -19,4 +19,5 @@ rescue Exception => ex
     puts "Was unable to write to the following stack trace to #{fname}:"
     puts the_stack_trace
   end
+  exit 1
 end
