@@ -5,6 +5,9 @@ require 'aeolus_cli/main'
 begin
   AeolusCli::Main.start
 rescue Exception => ex
+  if $aeolus_cli_supress_trace_message
+    exit 1
+  end
   puts "Error:  #{ex.message}"
   fname = "/tmp/aeolus-cli-trace-#{Process.pid}.log"
   the_stack_trace = ex.backtrace().join($/)

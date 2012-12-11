@@ -27,6 +27,9 @@ class AeolusCli::Provider < AeolusCli::CommonCli
     if !p.save
       self.shell.say "ERROR:  Conductor was unable to save the provider"
       self.shell.say p.errors.full_messages
+      # We are giving the user's the error from conductor, this is a
+      # "normal" case so don't pester the user with a stack trace
+      $aeolus_cli_supress_trace_message = true
       exit(1)
     else
       self.shell.say "Provider #{provider_name} added with id #{p.id}"
