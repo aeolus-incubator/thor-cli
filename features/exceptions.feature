@@ -7,3 +7,4 @@ Feature: Exception Handling
     """
     Error:
     """
+    And the exit status should be 1
