@@ -16,9 +16,9 @@ module ActiveResource
       #
       # from_array (in this Errors class) is brittle and will blow up
       # if it doesn't get an array of strings.
-      if array.size == 1 && array[0].is_a?(Hash) &&
+      if array.size >= 1 && array[0].is_a?(Hash) &&
         array[0].has_key?('message')
-        array = Array.wrap(Hash.from_xml(xml)['errors']['error']['message'])
+        array.map! {|error| error['message']}
       end
       from_array array, save_cache
     end
