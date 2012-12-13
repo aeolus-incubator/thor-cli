@@ -10,7 +10,7 @@ class AeolusCli::CommonCli < Thor
 
   def initialize(*args)
     super
-    configure_conductor_connection(options)
+    load_aeolus_config(options)
   end
 
   # abstract-y methods
@@ -41,18 +41,20 @@ class AeolusCli::CommonCli < Thor
     end
   end
 
-  def configure_conductor_connection(options)
-    @config = nil
-    # check default config file locations 
-    ["~/.aeolus-cli","/etc/aeolus-cli"].each do |fname|
-      if is_file?(fname)
-        @config = YAML::load(File.open(File.expand_path(fname)))
-        break
+  def load_aeolus_config(options)
+    # if user specified a location by environment variable, load it
+    if ENV.has_key?("AEOLUS_CLI_CONF") and !ENV["AEOLUS_CLI_CONF"].empty?
+      require ::File.expand_path(ENV["AEOLUS_CLI_CONF"],  __FILE__)
+    # else check the usual config file locations
+    else
+      ["~/.aeolus-cli.rb","/etc/aeolus-cli.rb"].each do |fname|
+        if is_file?(fname)
+          require ::File.expand_path(fname,  __FILE__)
+          break
+        end
       end
     end
-    if @config != nil
-      configure_active_resource
-    end
+
     # allow overrides from command line
     if options[:conductor_url]
       AeolusCli::Model::Base.site = options[:conductor_url]
@@ -103,24 +105,6 @@ class AeolusCli::CommonCli < Thor
       deltacloud_driver_to_provider_type[pt.deltacloud_driver] = pt
     end
     deltacloud_driver_to_provider_type
-  end
-
-  # The two methods below which are related to loading
-  # site/username/password from a config file such as ~/.aeolus-cli
-  # are borrowed from original aeolus-cli project
-  def configure_active_resource
-    if @config.has_key?(:conductor)
-      [:url, :password, :username].each do |key|
-        raise AeolusCli::ConfigError.new(
-         "Error in configuration file: #{key} is missing") \
-          unless @config[:conductor].has_key?(key)
-      end
-      AeolusCli::Model::Base.site = @config[:conductor][:url]
-      AeolusCli::Model::Base.user = @config[:conductor][:username]
-      AeolusCli::Model::Base.password = @config[:conductor][:password]
-    else
-      raise AeolusCli::ConfigError.new("Error in configuration file")
-    end
   end
 
   # TODO: Consider ripping all this file-related stuff into a module or
