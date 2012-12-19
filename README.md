@@ -5,11 +5,27 @@ Revamp of cli tooling for aeolus conductor.  Thor scaffolding is in
 place, along with ActiveResource-backed interaction with Conductor's
 REST api to list or add providers.
 
-Authentication options for the Conductor api can specified in
-~/.aeolus-cli as per the old aeolus client.  Or, /etc/aeolus-cli is
-checked if ~/.aeolus-cli does not exist.  Finally, these options may
-instead be supplied on the command line with --conductor-url,
---username, and --password.
+## Configuration
+
+Connection/auth options for the Conductor API may be specified in a
+configuration file in one of three places: the file defined by the
+environment variable AEOLUS_CLI_CONF, otherwise ~/.aeolus-cli (if it
+exists), otherwise /etc/aeolus-cli (if it exists).  Additionaly,
+connection/auth options may be set or overridden from the command line
+with --conductor-url, --username and --password.
+
+Logging levels also are set in the configuration file.
+
+    # Sample configuration file
+    :conductor:
+      :url: http://example.com:3013/api
+      :username: master
+      :password: ofuniverse
+    :logging:
+      # one of DEBUG, WARN, INFO, ERROR or FATAL 
+      :level: WARN
+      # one of STDOUT, STDERR or /path/to/logfile
+      :logfile: STDERR
 
 ## Exploring the command and sub command usage
 
@@ -72,8 +88,6 @@ instead be supplied on the command line with --conductor-url,
 ## List providers
 
     $ aeolus provider list
-    I, [2012-10-31T14:18:49.411815 #10688]  INFO -- : GET http://localhost:3002/api/providers.xml
-    I, [2012-10-31T14:18:49.411966 #10688]  INFO -- : --> 200 OK 5591 (530.6ms)
     Name           Provider Type  Deltacloud Provider  Deltacloud url
     ec2-us-east-1  ec2            us-east-1            http://qeblade30.rhq.lab.eng.bos.redhat.com:3002/api
     mock           mock                                http://qeblade30.rhq.lab.eng.bos.redhat.com:3002/api
@@ -83,29 +97,17 @@ instead be supplied on the command line with --conductor-url,
 ## Add a provider
 
     $ aeolus provider add mock-test21 --deltacloud-url http://qeblade30.rhq.lab.eng.bos.redhat.com:3002/api --provider-type mock
-    I, [2012-10-31T14:20:18.522110 #10826]  INFO -- : GET http://localhost:3002/api/provider_types.xml
-    I, [2012-10-31T14:20:18.522251 #10826]  INFO -- : --> 200 OK 1060 (432.9ms)
-    I, [2012-10-31T14:20:19.314974 #10826]  INFO -- : POST http://localhost:3002/api/providers.xml
-    I, [2012-10-31T14:20:19.315100 #10826]  INFO -- : --> 201 Created 254 (707.5ms)
     Provider mock-test21 added with id 23
 
 ## Display remote error mesage when trying to add an existing provider
 
     $ aeolus provider add mock-test21 --deltacloud-url http://qeblade30.rhq.lab.eng.bos.redhat.com:3002/api --provider-type mock
-    I, [2012-10-31T14:20:24.297438 #10873]  INFO -- : GET http://localhost:3002/api/provider_types.xml
-    I, [2012-10-31T14:20:24.297604 #10873]  INFO -- : --> 200 OK 1060 (594.1ms)
-    I, [2012-10-31T14:20:24.919177 #10873]  INFO -- : POST http://localhost:3002/api/providers.xml
-    I, [2012-10-31T14:20:24.919330 #10873]  INFO -- : --> 422  100 (535.8ms)
     ERROR:  Conductor was unable to save the provider
     ["Provider name has already been taken"]
 
 ## List provider accounts
 
     $ aeolus provider_account list
-    I, [2012-12-11T10:26:20.775263 #1864]  INFO -- : GET https://localhost:443/conductor/api/provider_accounts.xml
-    I, [2012-12-11T10:26:20.775443 #1864]  INFO -- : --> 200 OK 285 (104.1ms)
-    I, [2012-12-11T10:26:20.932803 #1864]  INFO -- : GET https://localhost:443/conductor/api/provider_accounts/2.xml
-    I, [2012-12-11T10:26:20.932911 #1864]  INFO -- : --> 200 OK 418 (106.7ms)
     Name  Provider  Username  Quota
     mock  mock      mockuser  unlimited
 
@@ -117,18 +119,10 @@ instead be supplied on the command line with --conductor-url,
     <password>mockpassword</password>
     </credentials>
     $ aeolus provider_account add mock --provider-name mock --credentials-file /tmp/credentials.xml
-    I, [2012-12-11T09:42:24.823114 #31824]  INFO -- : GET https://localhost:443/conductor/api/providers.xml
-    I, [2012-12-11T09:42:24.823226 #31824]  INFO -- : --> 200 OK 245 (110.0ms)
-    I, [2012-12-11T09:42:26.032696 #31824]  INFO -- : POST https://localhost:443/conductor/api/provider_accounts.xml
-    I, [2012-12-11T09:42:26.032939 #31824]  INFO -- : --> 201 Created 418 (1197.6ms)
     Provider account mock added with id 2
 
 ## Display remote error message when trying to add an existing provider account
 
     $ aeolus provider_account add mock --provider-name mock --credentials-file /tmp/credentials.xml
-    I, [2012-12-11T10:31:56.555708 #2238]  INFO -- : GET https://localhost:443/conductor/api/providers.xml
-    I, [2012-12-11T10:31:56.555953 #2238]  INFO -- : --> 200 OK 245 (113.2ms)
-    I, [2012-12-11T10:31:56.930892 #2238]  INFO -- : POST https://localhost:443/conductor/api/provider_accounts.xml
-    I, [2012-12-11T10:31:56.931059 #2238]  INFO -- : --> 422 Unprocessable Entity 152 (357.4ms)
     ERROR:  Conductor was unable to save the provider account
     ["Label has already been taken", "Username has already been taken"]
