@@ -1,0 +1,8 @@
+# Sample aeolus-cli config file
+:conductor:
+  :url: http://example.com:3013/api
+  :username: master
+  :password: ofuniverse
+:logging:
+  :level: DEBUG
+  :log-file: STDERR

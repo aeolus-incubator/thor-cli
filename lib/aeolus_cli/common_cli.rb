@@ -10,7 +10,7 @@ class AeolusCli::CommonCli < Thor
 
   def initialize(*args)
     super
-    configure_conductor_connection(options)
+    load_aeolus_config(options)
   end
 
   # abstract-y methods
@@ -41,17 +41,66 @@ class AeolusCli::CommonCli < Thor
     end
   end
 
-  def configure_conductor_connection(options)
-    @config = nil
-    # check default config file locations 
-    ["~/.aeolus-cli","/etc/aeolus-cli"].each do |fname|
-      if is_file?(fname)
-        @config = YAML::load(File.open(File.expand_path(fname)))
-        break
+  def load_aeolus_config(options)
+    # set logging defaults
+    ActiveResource::Base.logger = Logger.new(STDOUT)
+    ActiveResource::Base.logger.level = Logger::WARN
+
+    # locate the config file if one exists
+    config_fname = nil
+    if ENV.has_key?("AEOLUS_CLI_CONF")
+      config_fname = ENV["AEOLUS_CLI_CONF"]
+      if !is_file?(config_fname)
+        raise AeolusCli::ConfigError.new(
+          "environment variable AEOLUS_CLI_CONF with value "+
+          "'#{ ENV['AEOLUS_CLI_CONF']}' does not point to an existing file")
+      end
+    else
+      ["~/.aeolus-cli","/etc/aeolus-cli"].each do |fname|
+        if is_file?(fname)
+          config_fname = fname
+          break
+        end
       end
     end
-    if @config != nil
-      configure_active_resource
+
+    # load the config file if we have one
+    if config_fname != nil
+      @config = YAML::load(File.open(File.expand_path(config_fname)))
+      if @config.has_key?(:conductor)
+        [:url, :password, :username].each do |key|
+          raise AeolusCli::ConfigError.new \
+          ("Error in configuration file: #{key} is missing"
+           ) unless @config[:conductor].has_key?(key)
+        end
+        AeolusCli::Model::Base.site = @config[:conductor][:url]
+        AeolusCli::Model::Base.user = @config[:conductor][:username]
+        AeolusCli::Model::Base.password = @config[:conductor][:password]
+      else
+        raise AeolusCli::ConfigError.new("Error in configuration file")
+      end
+      if @config.has_key?(:logging)
+        if  @config[:logging].has_key?(:logfile)
+          if @config[:logging][:logfile].upcase == "STDOUT"
+            ActiveResource::Base.logger = Logger.new(STDOUT)
+          elsif @config[:logging][:logfile].upcase == "STDERR"
+            ActiveResource::Base.logger = Logger.new(STDERR)
+          else
+            ActiveResource::Base.logger =
+              Logger.new(@config[:logging][:logfile])
+          end
+        end
+        if  @config[:logging].has_key?(:level)
+          log_level = @config[:logging][:level]
+          if ! ['DEBUG','WARN','INFO','ERROR','FATAL'].include?(log_level)
+            raise AeolusCli::ConfigError.new \
+            ("log level specified in configuration #{log_level}, is not valid."+
+             ".  shoud be one of DEBUG, WARN, INFO, ERROR or FATAL")
+          else
+            ActiveResource::Base.logger.level = eval("Logger::#{log_level}")
+          end
+        end
+      end
     end
     # allow overrides from command line
     if options[:conductor_url]
@@ -103,24 +152,6 @@ class AeolusCli::CommonCli < Thor
       deltacloud_driver_to_provider_type[pt.deltacloud_driver] = pt
     end
     deltacloud_driver_to_provider_type
-  end
-
-  # The two methods below which are related to loading
-  # site/username/password from a config file such as ~/.aeolus-cli
-  # are borrowed from original aeolus-cli project
-  def configure_active_resource
-    if @config.has_key?(:conductor)
-      [:url, :password, :username].each do |key|
-        raise AeolusCli::ConfigError.new(
-         "Error in configuration file: #{key} is missing") \
-          unless @config[:conductor].has_key?(key)
-      end
-      AeolusCli::Model::Base.site = @config[:conductor][:url]
-      AeolusCli::Model::Base.user = @config[:conductor][:username]
-      AeolusCli::Model::Base.password = @config[:conductor][:password]
-    else
-      raise AeolusCli::ConfigError.new("Error in configuration file")
-    end
   end
 
   # TODO: Consider ripping all this file-related stuff into a module or
