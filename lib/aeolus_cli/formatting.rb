@@ -1,0 +1,2 @@
+module AeolusCli::Formatting
+end
