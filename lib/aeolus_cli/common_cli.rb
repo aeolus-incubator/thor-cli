@@ -1,5 +1,6 @@
 require 'active_resource'
 require 'thor'
+require 'aeolus_cli/formatting'
 require 'aeolus_cli/model/base'
 require 'aeolus_cli/model/provider_type'
 
@@ -7,10 +8,15 @@ class AeolusCli::CommonCli < Thor
   class_option :conductor_url, :type => :string
   class_option :username, :type => :string
   class_option :password, :type => :string
+  class_option :format, :type => :string,
+    :desc => "FORMAT can be 'human' or 'machine'"
+
+  attr_accessor :output_format
 
   def initialize(*args)
     super
     load_aeolus_config(options)
+    set_output_format(options)
   end
 
   # abstract-y methods
@@ -114,25 +120,9 @@ class AeolusCli::CommonCli < Thor
     end
   end
 
-  # Given a hash of attribute key name to pretty name and an active
-  # resource collection, print the output.
-  def print_table( keys_to_pretty_names, ares_collection)
-    t = Array.new
-
-    # Add the first row, the column headings
-    t.push keys_to_pretty_names.values
-
-    # Add the data
-    ares_collection.each do |ares|
-      row = Array.new
-      keys_to_pretty_names.keys.each do |key|
-        row.push ares.attributes[key].to_s
-      end
-      t.push row
-    end
-
-    # use Thor's shell.print_table()
-    self.shell.print_table(t)
+  # Set output format (human vs. machine)
+  def set_output_format(options)
+    @output_format = AeolusCli::Formatting.create_format(shell, options)
   end
 
   def provider_type(type_s)
