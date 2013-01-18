@@ -50,6 +50,7 @@ Feature: Usage
       aeolus provider list
     
     Options:
+      [--fields=FIELDS]                # Fields (attributes) to print in the listing
       [--conductor-url=CONDUCTOR_URL]  
       [--username=USERNAME]            
       [--password=PASSWORD]            
@@ -85,6 +86,7 @@ Feature: Usage
       aeolus provider_account list
     
     Options:
+      [--fields=FIELDS]                # Fields (attributes) to print in the listing
       [--conductor-url=CONDUCTOR_URL]  
       [--username=USERNAME]            
       [--password=PASSWORD]            

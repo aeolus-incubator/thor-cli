@@ -45,6 +45,17 @@ class AeolusCli::CommonCli < Thor
       #     aeolus list
       #"#{basename} #{task.formatted_usage(self, $thor_runner, subcommand)}"
     end
+
+    def method_options_for_resource_list
+      method_option_fields
+      # TODO: method_option_sort_by
+    end
+
+    def method_option_fields
+      method_option :fields,
+        :type => :string,
+        :desc => 'Fields (attributes) to print in the listing'
+    end
   end
 
   def load_aeolus_config(options)
@@ -123,6 +134,12 @@ class AeolusCli::CommonCli < Thor
   # Set output format (human vs. machine)
   def set_output_format(options)
     @output_format = AeolusCli::Formatting.create_format(shell, options)
+  end
+
+  # Transforms e.g. 'name,status' into [:name, :status]
+  def resource_fields(fields_option)
+    return nil unless fields_option
+    fields_option.split(',').map { |option| option.to_sym }
   end
 
   def provider_type(type_s)
