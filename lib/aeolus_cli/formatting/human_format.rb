@@ -1,11 +1,14 @@
 require 'aeolus_cli/formatting/format'
 require 'aeolus_cli/formatting/human_presenter_filter'
+require 'aeolus_cli/formatting/provider_presenter'
 
 module AeolusCli::Formatting
   # Format that prints objects in a human-friendly way.
   class HumanFormat < Format
     def initialize(shell)
       super(shell)
+
+      register("AeolusCli::Model::Provider", ProviderPresenter)
     end
 
     def detail(object, fields_override = nil)

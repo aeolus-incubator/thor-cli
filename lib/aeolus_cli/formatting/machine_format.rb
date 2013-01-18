@@ -1,4 +1,5 @@
 require 'aeolus_cli/formatting/format'
+require 'aeolus_cli/formatting/provider_presenter'
 
 module AeolusCli::Formatting
   # Format that prints objects in a machine-friendly way.
@@ -6,6 +7,8 @@ module AeolusCli::Formatting
     def initialize(shell, separator = "\t")
       super(shell)
       @separator = separator
+
+      register("AeolusCli::Model::Provider", ProviderPresenter)
     end
 
     def detail(object, fields_override = nil)

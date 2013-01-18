@@ -6,11 +6,7 @@ class AeolusCli::Provider < AeolusCli::CommonCli
   desc "list", "List all providers"
   def list
     providers = AeolusCli::Model::Provider.all
-    print_table( { :name => "Name",
-                   :provider_type => "Provider Type",
-                   :deltacloud_provider => "Deltacloud Provider",
-                   :url => "Deltacloud url" },
-                 providers )
+    output_format.list(providers)
   end
 
   desc "add PROVIDER_NAME", "Add a provider"
