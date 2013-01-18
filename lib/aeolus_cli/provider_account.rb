@@ -6,17 +6,11 @@ class AeolusCli::ProviderAccount < AeolusCli::CommonCli
   desc "list", "list provider accounts"
   # TODO maybe an optional variable for provider_type
   def list
-    accts = AeolusCli::Model::ProviderAccount.all.map! do |acct|
-      full = AeolusCli::Model::ProviderAccount.find(acct.id)
-      full.print_quota = full.quota.maximum_running_instances
-      full.print_username = full.credentials.username
-      full
+    accounts = AeolusCli::Model::ProviderAccount.all.map! do |account|
+      # getting a separate resource gives more details than collection
+      AeolusCli::Model::ProviderAccount.find(account.id)
     end
-    print_table({:name => "Name",
-                 :provider => "Provider",
-                 :print_username => "Username",
-                 :print_quota => "Quota"},
-                accts)
+    output_format.list(accounts)
   end
 
   desc "add PROVIDER_ACCOUNT_LABEL", "Add a provider account"
