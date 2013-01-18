@@ -23,6 +23,7 @@ Feature: Usage
       [--conductor-url=CONDUCTOR_URL]  
       [--username=USERNAME]            
       [--password=PASSWORD]            
+      [--format=FORMAT]                # FORMAT can be 'human' or 'machine'
     """
 
   Scenario: Provider Account
@@ -38,6 +39,7 @@ Feature: Usage
       [--conductor-url=CONDUCTOR_URL]  
       [--username=USERNAME]            
       [--password=PASSWORD]            
+      [--format=FORMAT]                # FORMAT can be 'human' or 'machine'
     """
 
   Scenario: Provider Help List
@@ -51,6 +53,7 @@ Feature: Usage
       [--conductor-url=CONDUCTOR_URL]  
       [--username=USERNAME]            
       [--password=PASSWORD]            
+      [--format=FORMAT]                # FORMAT can be 'human' or 'machine'
     
     List all providers
     """
@@ -69,6 +72,7 @@ Feature: Usage
           [--conductor-url=CONDUCTOR_URL]              
           [--username=USERNAME]                        
           [--password=PASSWORD]                        
+          [--format=FORMAT]                            # FORMAT can be 'human' or 'machine'
 
     Add a provider
     """
@@ -84,6 +88,7 @@ Feature: Usage
       [--conductor-url=CONDUCTOR_URL]  
       [--username=USERNAME]            
       [--password=PASSWORD]            
+      [--format=FORMAT]                # FORMAT can be 'human' or 'machine'
     
     list provider accounts
     """
@@ -103,6 +108,7 @@ Feature: Usage
           [--conductor-url=CONDUCTOR_URL]      
           [--username=USERNAME]                
           [--password=PASSWORD]                
+          [--format=FORMAT]                    # FORMAT can be 'human' or 'machine'
     
     Add a provider account
     """

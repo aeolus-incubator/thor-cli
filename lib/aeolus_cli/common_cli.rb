@@ -1,5 +1,6 @@
 require 'active_resource'
 require 'thor'
+require 'aeolus_cli/formatting'
 require 'aeolus_cli/model/base'
 require 'aeolus_cli/model/provider_type'
 
@@ -7,10 +8,15 @@ class AeolusCli::CommonCli < Thor
   class_option :conductor_url, :type => :string
   class_option :username, :type => :string
   class_option :password, :type => :string
+  class_option :format, :type => :string,
+    :desc => "FORMAT can be 'human' or 'machine'"
+
+  attr_accessor :output_format
 
   def initialize(*args)
     super
     load_aeolus_config(options)
+    set_output_format(options)
   end
 
   # abstract-y methods
@@ -112,6 +118,11 @@ class AeolusCli::CommonCli < Thor
     if options[:password]
       AeolusCli::Model::Base.password = options[:password]
     end
+  end
+
+  # Set output format (human vs. machine)
+  def set_output_format(options)
+    @output_format = AeolusCli::Formatting.create_format(shell, options)
   end
 
   # Given a hash of attribute key name to pretty name and an active
