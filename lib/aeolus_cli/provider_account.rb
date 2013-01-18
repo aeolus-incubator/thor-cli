@@ -6,10 +6,7 @@ class AeolusCli::ProviderAccount < AeolusCli::CommonCli
   desc "list", "list provider accounts"
   # TODO maybe an optional variable for provider_type
   def list
-    accounts = AeolusCli::Model::ProviderAccount.all.map! do |account|
-      # getting a separate resource gives more details than collection
-      AeolusCli::Model::ProviderAccount.find(account.id)
-    end
+    accounts = AeolusCli::Model::ProviderAccount.all_full_detail
     output_format.list(accounts)
   end
 
