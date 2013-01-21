@@ -34,4 +34,13 @@ end
 
 class AeolusCli::Model::ProviderAccount < AeolusCli::Model::Base
   self.format = ProviderAccountXMLFormat.new
+
+  # FIXME: This should not be necessary when we update API to show full
+  # representations in resource collections.
+  def self.all_full_detail
+    self.all.map! do |account|
+      # getting a separate resource gives more details than collection
+      AeolusCli::Model::ProviderAccount.find(account.id)
+    end
+  end
 end
