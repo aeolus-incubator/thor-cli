@@ -1,6 +1,8 @@
 thor-cli
 ========
 
+[![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/aeolus-incubator/thor-cli)
+
 Revamp of cli tooling for aeolus conductor.  Thor scaffolding is in
 place, along with ActiveResource-backed interaction with Conductor's
 REST api to list or add providers.
@@ -22,7 +24,7 @@ Logging levels also are set in the configuration file.
       :username: master
       :password: ofuniverse
     :logging:
-      # one of DEBUG, WARN, INFO, ERROR or FATAL 
+      # one of DEBUG, WARN, INFO, ERROR or FATAL
       :level: WARN
       # one of STDOUT, STDERR or /path/to/logfile
       :logfile: STDERR
