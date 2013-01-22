@@ -4,9 +4,10 @@ require 'aeolus_cli/model/provider'
 class AeolusCli::Provider < AeolusCli::CommonCli
 
   desc "list", "List all providers"
+  method_options_for_resource_list
   def list
     providers = AeolusCli::Model::Provider.all
-    output_format.list(providers)
+    output_format.list(providers, resource_fields(options[:fields]))
   end
 
   desc "add PROVIDER_NAME", "Add a provider"
