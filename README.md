@@ -1,6 +1,7 @@
 thor-cli
 ========
 
+[![Build Status](https://travis-ci.org/aeolus-incubator/thor-cli.png?branch=master)](https://travis-ci.org/aeolus-incubator/thor-cli)
 [![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/aeolus-incubator/thor-cli)
 
 Revamp of cli tooling for aeolus conductor.  Thor scaffolding is in
