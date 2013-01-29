@@ -32,13 +32,14 @@ module AeolusCli::Formatting
     def list(objects, fields_override = nil, sort_by = nil)
       return if objects.empty?
 
+      presenters = presenters_for(objects, fields_override, sort_by)
+
       table = []
-
       # table header
-      table << presenter_for(objects.first, fields_override).list_table_header
+      table << presenters.first.list_table_header
 
-      objects.each do |object|
-        table << presenter_for(object, fields_override).list_item
+      presenters.each do |presenter|
+        table << presenter.list_item
       end
 
       print_table(table)

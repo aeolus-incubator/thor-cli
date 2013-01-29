@@ -30,17 +30,17 @@ describe AeolusCli::Formatting::HumanFormat do
 
   context "printing a list" do
     before do
-      format.stub_chain("presenter_for.list_item")
-        .and_return(['list', 'item'])
-      format.stub_chain("presenter_for.list_table_header")
-        .and_return(['table', 'header'])
+      format.stub("presenters_for").and_return([
+        double('first', :list_item => ['list', 'item'], :list_table_header => ['table', 'header']),
+        double('second', :list_item => ['list2', 'item2']),
+      ])
     end
 
     it "prints the data" do
       format.should_receive(:print_table).with([
                                                  ["table", "header"],
                                                  ["list", "item"],
-                                                 ["list", "item"],
+                                                 ["list2", "item2"],
                                                ])
 
       format.list(['a', 'b'])
