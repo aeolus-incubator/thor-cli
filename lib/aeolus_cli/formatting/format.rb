@@ -1,4 +1,5 @@
 require 'aeolus_cli/formatting/errors'
+require 'aeolus_cli/formatting/presenter_sorter'
 
 module AeolusCli::Formatting
   # This class (or more precisely, classes that inherit from this one) can
@@ -28,6 +29,14 @@ module AeolusCli::Formatting
       raise PresenterMissingError.new(self, object) unless presenter_class
 
       presenter_class.new(object, fields_override)
+    end
+
+    # Gets an array of presenters for array of objects. The array sorted
+    # according to the sort_by parameter. See PresenterSorter for details how
+    # sorting works.
+    def presenters_for(objects, fields_override = nil, sort_by = nil)
+      presenters = objects.map { |object| presenter_for(object, fields_override) }
+      PresenterSorter.new(presenters, sort_by).sorted_presenters
     end
 
     # Registers a presenter to use for objects of some type.

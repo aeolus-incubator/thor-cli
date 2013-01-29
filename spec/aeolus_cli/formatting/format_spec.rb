@@ -7,7 +7,7 @@ describe AeolusCli::Formatting::Format do
 
   context "with a presenter" do
     let(:presenter) { double('presenter') }
-    let(:presenter_class) { double('presenter_class') }
+    let(:presenter_class) { double('presenter_class', :new => presenter) }
 
     before do
       format.register("String", presenter_class)
@@ -31,6 +31,20 @@ describe AeolusCli::Formatting::Format do
 
         subject.should == presenter
       end
+    end
+
+    context "#presenters_for" do
+      let(:sorted_presenters) { double('sorted_presenters') }
+      let(:sorter) { double('sorter', :sorted_presenters => sorted_presenters) }
+      before do
+        AeolusCli::Formatting::PresenterSorter
+          .should_receive(:new)
+          .with([presenter, presenter], [:name, :asc])
+          .and_return(sorter)
+      end
+
+      subject { format.presenters_for(['one', 'two'], nil, [:name, :asc]) }
+      it { should == sorted_presenters }
     end
   end
 

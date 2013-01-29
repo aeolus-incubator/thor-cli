@@ -51,6 +51,7 @@ Feature: Usage
     
     Options:
       [--fields=FIELDS]                # Fields (attributes) to print in the listing
+      [--sort-by=SORT_BY]              # Sort output by value of field(s)
       [--conductor-url=CONDUCTOR_URL]  
       [--username=USERNAME]            
       [--password=PASSWORD]            
@@ -87,6 +88,7 @@ Feature: Usage
     
     Options:
       [--fields=FIELDS]                # Fields (attributes) to print in the listing
+      [--sort-by=SORT_BY]              # Sort output by value of field(s)
       [--conductor-url=CONDUCTOR_URL]  
       [--username=USERNAME]            
       [--password=PASSWORD]            
