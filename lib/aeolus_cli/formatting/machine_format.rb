@@ -22,9 +22,11 @@ module AeolusCli::Formatting
     def list(objects, fields_override = nil, sort_by = nil)
       return if objects.empty?
 
+      presenters = presenters_for(objects, fields_override, sort_by)
+
       list = []
-      objects.each do |object|
-        list << presenter_for(object, fields_override).list_item
+      presenters.each do |presenter|
+        list << presenter.list_item
       end
 
       print_list(list, @separator)

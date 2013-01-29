@@ -7,7 +7,9 @@ class AeolusCli::Provider < AeolusCli::CommonCli
   method_options_for_resource_list
   def list
     providers = AeolusCli::Model::Provider.all
-    output_format.list(providers, resource_fields(options[:fields]))
+    output_format.list(providers,
+                       resource_fields(options[:fields]),
+                       resource_sort_by(options[:sort_by]))
   end
 
   desc "add PROVIDER_NAME", "Add a provider"

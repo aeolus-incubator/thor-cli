@@ -8,7 +8,9 @@ class AeolusCli::ProviderAccount < AeolusCli::CommonCli
   # TODO maybe an optional variable for provider_type
   def list
     accounts = AeolusCli::Model::ProviderAccount.all_full_detail
-    output_format.list(accounts, resource_fields(options[:fields]))
+    output_format.list(accounts,
+                       resource_fields(options[:fields]),
+                       resource_sort_by(options[:sort_by]))
   end
 
   desc "add PROVIDER_ACCOUNT_LABEL", "Add a provider account"

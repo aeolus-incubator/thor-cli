@@ -24,12 +24,18 @@ describe AeolusCli::Formatting::MachineFormat do
 
   context "printing a list" do
     before do
-      format.stub_chain("presenter_for.list_item")
-        .and_return(['list', 'item'])
+      format.stub("presenters_for").and_return([
+        double('first', :list_item => ['list', 'item']),
+        double('second', :list_item => ['list2', 'item2']),
+      ])
     end
 
     it "prints the data" do
-      format.should_receive(:print).with("list;item").twice
+      format.should_receive(:print_list)
+            .with([
+                    ['list', 'item'],
+                    ['list2', 'item2'],
+                  ], ';')
 
       format.list(['a', 'b'])
     end

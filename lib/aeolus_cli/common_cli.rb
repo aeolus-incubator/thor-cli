@@ -48,13 +48,19 @@ class AeolusCli::CommonCli < Thor
 
     def method_options_for_resource_list
       method_option_fields
-      # TODO: method_option_sort_by
+      method_option_sort_by
     end
 
     def method_option_fields
       method_option :fields,
         :type => :string,
         :desc => 'Fields (attributes) to print in the listing'
+    end
+
+    def method_option_sort_by
+      method_option :sort_by,
+        :type => :string,
+        :desc => 'Sort output by value of field(s)'
     end
   end
 
@@ -143,6 +149,25 @@ class AeolusCli::CommonCli < Thor
       raise Thor::MalformattedArgumentError.new("Option 'fields' cannot be empty.")
     end
     fields_option.split(',').map { |option| option.to_sym }
+  end
+
+  def resource_sort_by(sort_by_option)
+    return nil unless sort_by_option
+    if sort_by_option == ''
+      raise Thor::MalformattedArgumentError.new("Option 'sort_by' cannot be empty.")
+    end
+    sort_by_option.split(',').map { |option| parse_one_sort_by_option(option) }
+  end
+
+  def parse_one_sort_by_option(option)
+    case option[-1]
+    when '+'
+      [option[0..-2].to_sym, :asc]
+    when '-'
+      [option[0..-2].to_sym, :desc]
+    else
+      [option.to_sym, :asc]
+    end
   end
 
   def provider_type(type_s)
