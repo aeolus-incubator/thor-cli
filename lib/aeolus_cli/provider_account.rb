@@ -1,5 +1,5 @@
 require 'aeolus_cli/common_cli'
-require 'aeolus_cli/model/provider_account'
+require 'aeolus_client/provider_account'
 
 class AeolusCli::ProviderAccount < AeolusCli::CommonCli
 
@@ -7,7 +7,7 @@ class AeolusCli::ProviderAccount < AeolusCli::CommonCli
   method_options_for_resource_list
   # TODO maybe an optional variable for provider_type
   def list
-    accounts = AeolusCli::Model::ProviderAccount.all_full_detail
+    accounts = AeolusClient::ProviderAccount.all_full_detail
     output_format.list(accounts,
                        resource_fields(options[:fields]),
                        resource_sort_by(options[:sort_by]))
@@ -22,13 +22,13 @@ class AeolusCli::ProviderAccount < AeolusCli::CommonCli
     :default => "unlimited", :desc => "maximum running instances"
   def add(label)
     credentials = credentials_from_file(options[:credentials_file])
-    provider = AeolusCli::Model::Provider.all.find {|p| p.name == options[:provider_name]}
+    provider = AeolusClient::Provider.all.find {|p| p.name == options[:provider_name]}
     unless provider
       self.shell.say "ERROR: The provider '#{options[:provider_name]}' does not exist"
       exit(1)
     end
 
-    pa = AeolusCli::Model::ProviderAccount.new(
+    pa = AeolusClient::ProviderAccount.new(
            :label => label,
            :provider => {:id => provider.id},
            :credentials => credentials,

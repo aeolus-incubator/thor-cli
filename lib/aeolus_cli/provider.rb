@@ -1,12 +1,12 @@
 require 'aeolus_cli/common_cli'
-require 'aeolus_cli/model/provider'
+require 'aeolus_client/provider'
 
 class AeolusCli::Provider < AeolusCli::CommonCli
 
   desc "list", "List all providers"
   method_options_for_resource_list
   def list
-    providers = AeolusCli::Model::Provider.all
+    providers = AeolusClient::Provider.all
     output_format.list(providers,
                        resource_fields(options[:fields]),
                        resource_sort_by(options[:sort_by]))
@@ -19,7 +19,7 @@ class AeolusCli::Provider < AeolusCli::CommonCli
   method_option :deltacloud_provider, :type => :string
   def add(provider_name)
     # TODO: validation on provider_type (make sure exists)
-    p = AeolusCli::Model::Provider.new(:name => provider_name,
+    p = AeolusClient::Provider.new(:name => provider_name,
          :url => options[:deltacloud_url],
          :provider_type => provider_type(options[:provider_type]),
          :deltacloud_provider => options[:deltacloud_provider])

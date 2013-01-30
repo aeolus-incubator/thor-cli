@@ -28,10 +28,10 @@ end
 # declaring the namespace but for style reasons not including the Base
 # class definition within the block (saving as much excessive
 # indentation as possible)
-module AeolusCli::Model
+module AeolusClient
 end
 
-class AeolusCli::Model::Base < ActiveResource::Base
+class AeolusClient::Base < ActiveResource::Base
   self.timeout = 600
   self.format = :xml
 end

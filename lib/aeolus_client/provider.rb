@@ -1,4 +1,4 @@
-class ProviderXMLFormat
+class AeolusClient::ProviderXMLFormat
   include ActiveResource::Formats::XmlFormat
 
   def decode(xml)
@@ -29,6 +29,6 @@ class ProviderXMLFormat
   end
 end
 
-class AeolusCli::Model::Provider < AeolusCli::Model::Base
-  self.format = ProviderXMLFormat.new
+class AeolusClient::Provider < AeolusClient::Base
+  self.format = AeolusClient::ProviderXMLFormat.new
 end

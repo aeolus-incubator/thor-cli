@@ -9,8 +9,8 @@ module AeolusCli::Formatting
       super(shell)
       @separator = separator
 
-      register("AeolusCli::Model::Provider", ProviderPresenter)
-      register("AeolusCli::Model::ProviderAccount", ProviderAccountPresenter)
+      register("AeolusClient::Provider", ProviderPresenter)
+      register("AeolusClient::ProviderAccount", ProviderAccountPresenter)
     end
 
     def detail(object, fields_override = nil)

@@ -1,4 +1,4 @@
-class ProviderAccountXMLFormat
+class AeolusClient::ProviderAccountXMLFormat
   include ActiveResource::Formats::XmlFormat
 
   def decode(xml)
@@ -32,15 +32,15 @@ class ProviderAccountXMLFormat
   end
 end
 
-class AeolusCli::Model::ProviderAccount < AeolusCli::Model::Base
-  self.format = ProviderAccountXMLFormat.new
+class AeolusClient::ProviderAccount < AeolusClient::Base
+  self.format = AeolusClient::ProviderAccountXMLFormat.new
 
   # FIXME: This should not be necessary when we update API to show full
   # representations in resource collections.
   def self.all_full_detail
     self.all.map! do |account|
       # getting a separate resource gives more details than collection
-      AeolusCli::Model::ProviderAccount.find(account.id)
+      AeolusClient::ProviderAccount.find(account.id)
     end
   end
 end

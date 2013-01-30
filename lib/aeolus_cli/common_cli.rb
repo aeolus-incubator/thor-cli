@@ -1,8 +1,8 @@
 require 'active_resource'
 require 'thor'
 require 'aeolus_cli/formatting'
-require 'aeolus_cli/model/base'
-require 'aeolus_cli/model/provider_type'
+require 'aeolus_client/base'
+require 'aeolus_client/provider_type'
 
 class AeolusCli::CommonCli < Thor
   class_option :conductor_url, :type => :string
@@ -96,9 +96,9 @@ class AeolusCli::CommonCli < Thor
           ("Error in configuration file: #{key} is missing"
            ) unless @config[:conductor].has_key?(key)
         end
-        AeolusCli::Model::Base.site = @config[:conductor][:url]
-        AeolusCli::Model::Base.user = @config[:conductor][:username]
-        AeolusCli::Model::Base.password = @config[:conductor][:password]
+        AeolusClient::Base.site = @config[:conductor][:url]
+        AeolusClient::Base.user = @config[:conductor][:username]
+        AeolusClient::Base.password = @config[:conductor][:password]
       else
         raise AeolusCli::ConfigError.new("Error in configuration file")
       end
@@ -127,13 +127,13 @@ class AeolusCli::CommonCli < Thor
     end
     # allow overrides from command line
     if options[:conductor_url]
-      AeolusCli::Model::Base.site = options[:conductor_url]
+      AeolusClient::Base.site = options[:conductor_url]
     end
     if options[:username]
-      AeolusCli::Model::Base.user = options[:username]
+      AeolusClient::Base.user = options[:username]
     end
     if options[:password]
-      AeolusCli::Model::Base.password = options[:password]
+      AeolusClient::Base.password = options[:password]
     end
   end
 
@@ -179,7 +179,7 @@ class AeolusCli::CommonCli < Thor
 
   def provider_type_hash
     deltacloud_driver_to_provider_type = Hash.new
-    provider_types = AeolusCli::Model::ProviderType.all
+    provider_types = AeolusClient::ProviderType.all
     if provider_types.size == 0
       raise "Retrieved zero provider types from Conductor"
     end
