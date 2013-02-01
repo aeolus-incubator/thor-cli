@@ -1,9 +1,9 @@
 #!/usr/bin/env ruby
 
-require 'aeolus_cli/main'
+require 'aeolus/cli/main'
 
 begin
-  AeolusCli::Main.start
+  Aeolus::Cli::Main.start
 rescue Exception => ex
   if $aeolus_cli_supress_trace_message
     exit 1

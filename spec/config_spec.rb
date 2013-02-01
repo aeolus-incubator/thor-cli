@@ -1,4 +1,4 @@
-require 'aeolus_cli/main'
+require 'aeolus/cli/main'
 
 describe "loading configuration-file by environment variable" do
 
@@ -9,41 +9,41 @@ describe "loading configuration-file by environment variable" do
 
   describe 'with no command line overrides' do
     before do
-      AeolusCli::Provider.start
+      Aeolus::Cli::Provider.start
     end
     it 'the configuration file should be loaded' do
-      AeolusClient::Base.site.to_s.should == 'http://example.com:3013/api'
-      AeolusClient::Base.user.to_s.should == 'master'
-      AeolusClient::Base.password.to_s.should == 'ofuniverse'
+      Aeolus::Client::Base.site.to_s.should == 'http://example.com:3013/api'
+      Aeolus::Client::Base.user.to_s.should == 'master'
+      Aeolus::Client::Base.password.to_s.should == 'ofuniverse'
       ActiveResource::Base.logger.level.should == Logger::DEBUG
     end
   end
 
   describe 'with --username override' do
     before do
-      AeolusCli::Provider.start(["--username", "override-user"])
+      Aeolus::Cli::Provider.start(["--username", "override-user"])
     end
     it 'the configuration file should be loaded' do
-      AeolusClient::Base.user.to_s.should == 'override-user'
+      Aeolus::Client::Base.user.to_s.should == 'override-user'
     end
   end
 
   describe 'with --password override' do
     before do
-      AeolusCli::Provider.start(["--password", "override-password"])
+      Aeolus::Cli::Provider.start(["--password", "override-password"])
     end
     it 'the configuration file should be loaded' do
-      AeolusClient::Base.password.to_s.should == 'override-password'
+      Aeolus::Client::Base.password.to_s.should == 'override-password'
     end
   end
 
   describe 'with --conductor-url override' do
     before do
-      AeolusCli::Provider.start(["--conductor-url",
+      Aeolus::Cli::Provider.start(["--conductor-url",
                                  "https://localhost/conductor/api"])
     end
     it 'the configuration file should be loaded' do
-      AeolusClient::Base.site.to_s.should ==
+      Aeolus::Client::Base.site.to_s.should ==
         'https://localhost/conductor/api'
     end
   end
