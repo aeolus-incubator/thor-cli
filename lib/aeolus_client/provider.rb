@@ -1,3 +1,5 @@
+require 'aeolus_client/base'
+
 class AeolusClient::ProviderXMLFormat
   include ActiveResource::Formats::XmlFormat
 
