@@ -1,5 +1,6 @@
 require 'active_resource'
 require 'thor'
+require 'aeolus/cli/errors'
 require 'aeolus/cli/formatting'
 require 'aeolus/client/base'
 require 'aeolus/client/provider_type'
