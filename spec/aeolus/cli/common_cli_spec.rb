@@ -3,6 +3,22 @@ require 'aeolus/cli/common_cli'
 describe Aeolus::Cli::CommonCli do
   let(:common_cli) { Aeolus::Cli::CommonCli.new() }
 
+  context "#initialize" do
+    subject { common_cli }
+
+    context "config" do
+      let(:config) do
+        double('config').tap { |c| c.should_receive(:push) }
+      end
+
+      before do
+        Aeolus::Cli::Config.should_receive(:new_from_hash).and_return(config)
+      end
+
+      its(:config) { should == config }
+    end
+  end
+
   context "#resource_fields" do
     context "non-empty fields" do
       subject { common_cli.send(:resource_fields, "name,status,is_cool") }
