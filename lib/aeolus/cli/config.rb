@@ -28,6 +28,19 @@ module Aeolus::Cli
       Aeolus::Client::Base.password = self[:conductor][:password]
     end
 
+    def validate!
+      error_class = Aeolus::Cli::ConfigError
+      required_attributes = {
+        '--conductor-url' => self[:conductor][:url],
+        '--username'      => self[:conductor][:username],
+        '--password'      => self[:conductor][:password],
+      }
+      required_attributes.each do |name, value|
+        raise error_class, "Setting #{name} is required." unless value
+      end
+      true
+    end
+
 
     class << self
       def new_from_hash(hash)

@@ -2,6 +2,19 @@ require 'aeolus/cli/config'
 
 describe Aeolus::Cli::Config do
   let(:config_class) { Aeolus::Cli::Config }
+  let(:config) do
+    Aeolus::Cli::Config.new_from_hash({
+      :conductor => {
+        :url => 'http://myurl/api',
+        :username => 'user',
+        :password => 'pass',
+      },
+      :logging => {
+        :level => 'DEBUG',
+        :file => 'STDERR',
+      }
+    })
+  end
 
   context ".load_config" do
     subject { config_class.load_config(:password => 'pass') }
@@ -113,20 +126,6 @@ describe Aeolus::Cli::Config do
   end
 
   context "#push" do
-    let(:config) do
-      Aeolus::Cli::Config.new_from_hash({
-        :conductor => {
-          :url => 'http://myurl/api',
-          :username => 'user',
-          :password => 'pass',
-        },
-        :logging => {
-          :level => 'DEBUG',
-          :file => 'STDERR',
-        }
-      })
-    end
-
     context "Aeolus::Client::Base" do
       it "pushes the config" do
         Aeolus::Client::Base.should_receive(:site=).with('http://myurl/api')
@@ -146,6 +145,22 @@ describe Aeolus::Cli::Config do
         logger.should_receive(:level=).with(Logger::DEBUG)
 
         config.push
+      end
+    end
+  end
+
+  context "#validate!" do
+    subject { config.validate! }
+
+    context "when config is valid" do
+      it { should == true }
+    end
+
+    %w{url password username}.each do |option|
+      context "when missing conductor.#{option}" do
+        before { config.merge!({ :conductor => { option.to_sym => nil } }) }
+
+        it { expect { subject }.to raise_error(Aeolus::Cli::ConfigError) }
       end
     end
   end

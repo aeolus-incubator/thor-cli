@@ -1,7 +1,8 @@
 require 'aeolus/cli/common_cli'
 
 describe Aeolus::Cli::CommonCli do
-  let(:common_cli) { Aeolus::Cli::CommonCli.new() }
+  let(:initialize_args) { [] }
+  let(:common_cli) { Aeolus::Cli::CommonCli.new(*initialize_args) }
 
   context "#initialize" do
     subject { common_cli }
@@ -16,6 +17,21 @@ describe Aeolus::Cli::CommonCli do
       end
 
       its(:config) { should == config }
+
+      context "when running non-help task" do
+        let(:initialize_args) do
+          [
+            [],
+            {},
+            { :current_task => double('list task', :name => 'list') },
+          ]
+        end
+
+        it "validates the config" do
+          config.should_receive(:validate!)
+          subject # run the constructor
+        end
+      end
     end
   end
 

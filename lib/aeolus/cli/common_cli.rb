@@ -15,9 +15,10 @@ class Aeolus::Cli::CommonCli < Thor
   attr_accessor :output_format
   attr_accessor :config
 
-  def initialize(*args)
-    super
-    load_config(options)
+  def initialize(args = [], opts = {}, cfg = {})
+    super(args, opts, cfg)
+    validate_config = cfg[:current_task] && cfg[:current_task].name != 'help'
+    load_config(options, validate_config)
     set_output_format(options)
   end
 
@@ -66,8 +67,9 @@ class Aeolus::Cli::CommonCli < Thor
     end
   end
 
-  def load_config(options)
+  def load_config(options, validate)
     @config = Aeolus::Cli::Config.load_config(options)
+    @config.validate! if validate
     @config.push
   end
 
