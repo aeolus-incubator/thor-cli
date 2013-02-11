@@ -1,5 +1,6 @@
 require 'active_resource'
 require 'thor'
+require 'aeolus/cli/config'
 require 'aeolus/cli/formatting'
 require 'aeolus/client/base'
 require 'aeolus/client/provider_type'
@@ -12,10 +13,12 @@ class Aeolus::Cli::CommonCli < Thor
     :desc => "FORMAT can be 'human' or 'machine'"
 
   attr_accessor :output_format
+  attr_accessor :config
 
-  def initialize(*args)
-    super
-    load_aeolus_config(options)
+  def initialize(args = [], opts = {}, cfg = {})
+    super(args, opts, cfg)
+    validate_config = cfg[:current_task] && cfg[:current_task].name != 'help'
+    load_config(options, validate_config)
     set_output_format(options)
   end
 
@@ -64,77 +67,10 @@ class Aeolus::Cli::CommonCli < Thor
     end
   end
 
-  def load_aeolus_config(options)
-    # set logging defaults
-    ActiveResource::Base.logger = Logger.new(STDOUT)
-    ActiveResource::Base.logger.level = Logger::WARN
-
-    # locate the config file if one exists
-    config_fname = nil
-    if ENV.has_key?("AEOLUS_CLI_CONF")
-      config_fname = ENV["AEOLUS_CLI_CONF"]
-      if !is_file?(config_fname)
-        raise Aeolus::Cli::ConfigError.new(
-          "environment variable AEOLUS_CLI_CONF with value "+
-          "'#{ ENV['AEOLUS_CLI_CONF']}' does not point to an existing file")
-      end
-    else
-      ["~/.aeolus-cli","/etc/aeolus-cli"].each do |fname|
-        if is_file?(fname)
-          config_fname = fname
-          break
-        end
-      end
-    end
-
-    # load the config file if we have one
-    if config_fname != nil
-      @config = YAML::load(File.open(File.expand_path(config_fname)))
-      if @config.has_key?(:conductor)
-        [:url, :password, :username].each do |key|
-          raise Aeolus::Cli::ConfigError.new \
-          ("Error in configuration file: #{key} is missing"
-           ) unless @config[:conductor].has_key?(key)
-        end
-        Aeolus::Client::Base.site = @config[:conductor][:url]
-        Aeolus::Client::Base.user = @config[:conductor][:username]
-        Aeolus::Client::Base.password = @config[:conductor][:password]
-      else
-        raise Aeolus::Cli::ConfigError.new("Error in configuration file")
-      end
-      if @config.has_key?(:logging)
-        if  @config[:logging].has_key?(:logfile)
-          if @config[:logging][:logfile].upcase == "STDOUT"
-            ActiveResource::Base.logger = Logger.new(STDOUT)
-          elsif @config[:logging][:logfile].upcase == "STDERR"
-            ActiveResource::Base.logger = Logger.new(STDERR)
-          else
-            ActiveResource::Base.logger =
-              Logger.new(@config[:logging][:logfile])
-          end
-        end
-        if  @config[:logging].has_key?(:level)
-          log_level = @config[:logging][:level]
-          if ! ['DEBUG','WARN','INFO','ERROR','FATAL'].include?(log_level)
-            raise Aeolus::Cli::ConfigError.new \
-            ("log level specified in configuration #{log_level}, is not valid."+
-             ".  shoud be one of DEBUG, WARN, INFO, ERROR or FATAL")
-          else
-            ActiveResource::Base.logger.level = eval("Logger::#{log_level}")
-          end
-        end
-      end
-    end
-    # allow overrides from command line
-    if options[:conductor_url]
-      Aeolus::Client::Base.site = options[:conductor_url]
-    end
-    if options[:username]
-      Aeolus::Client::Base.user = options[:username]
-    end
-    if options[:password]
-      Aeolus::Client::Base.password = options[:password]
-    end
+  def load_config(options, validate)
+    @config = Aeolus::Cli::Config.load_config(options)
+    @config.validate! if validate
+    @config.push
   end
 
   # Set output format (human vs. machine)
@@ -187,16 +123,6 @@ class Aeolus::Cli::CommonCli < Thor
       deltacloud_driver_to_provider_type[pt.deltacloud_driver] = pt
     end
     deltacloud_driver_to_provider_type
-  end
-
-  # TODO: Consider ripping all this file-related stuff into a module or
-  # class for better encapsulation and testability
-  def is_file?(path)
-    full_path = File.expand_path(path)
-    if File.exist?(full_path) && !File.directory?(full_path)
-      return true
-    end
-    false
   end
 
 end

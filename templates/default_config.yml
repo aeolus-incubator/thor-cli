@@ -1,0 +1,7 @@
+:conductor:
+  :url:
+  :username:
+  :password:
+:logging:
+  :level: ERROR
+  :file: STDERR
