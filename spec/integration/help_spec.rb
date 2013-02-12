@@ -22,7 +22,7 @@ describe "display help" do
       end
 
       describe "stderr" do
-        it { should be_empty }
+        it { should == "" }
       end
     end
   end
